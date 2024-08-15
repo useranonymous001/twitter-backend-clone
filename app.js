@@ -15,7 +15,7 @@ app.use(helmet());
 app.disable("x-powered-by");
 
 const store = new MongoDBStore({
-  uri: "mongodb://localhost:27017/twitter",
+  uri: process.env.MONGODB_URL,
   collection: "sessions",
 });
 
@@ -27,7 +27,7 @@ store.on("error", function (error) {
 // Configure the session middleware
 app.use(
   session({
-    secret: "your-secret-key", // Replace with your secret key
+    secret: process.env.SESSION_SECRET_KEY, // Replace with your secret key
     resave: false,
     saveUninitialized: false,
     store: store,
