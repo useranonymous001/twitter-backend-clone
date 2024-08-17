@@ -2,7 +2,7 @@ const { Schema, model } = require("mongoose");
 
 const tweetSchema = new Schema(
   {
-    tweet: {
+    content: {
       type: String,
       Date: Date.now(),
     },

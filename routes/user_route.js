@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const USER = require("../models/user_model");
 const { sendErrorResponse } = require("../controllers/error_handler");
-
+const { generateToken } = require("../utils/token_generator");
 
 // routes
 router.post("/signup", async (req, res, next) => {
@@ -36,12 +36,21 @@ router.post("/login", async (req, res) => {
     if (!match) {
       return sendErrorResponse(res, "invalid user credentials");
     }
-    req.session.userId = user._id;
+    // need changes later on
+    // req.session.userId = user._id;
+
+    const token = generateToken(user.username, user.email, user._id);
+    res.cookie("isLoggedIn", token);
 
     return res.json({ message: `successfully logged !!` });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("isLoggedIn");
+  return res.redirect("/home");
 });
 
 module.exports = router;
