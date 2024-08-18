@@ -16,6 +16,7 @@ const userSchema = new Schema(
     password: {
       type: String,
       required: true,
+      min: [7, "too small password"],
     },
 
     bio: {
@@ -59,6 +60,9 @@ const userSchema = new Schema(
         ref: "tweet",
       },
     ],
+    refreshToken: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

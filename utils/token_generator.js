@@ -1,17 +1,28 @@
 const jwt = require("jsonwebtoken");
+const USER = require("../models/user_model");
 
-function generateToken(username, email, id) {
+async function generateAccessTokenAndRefreshToken(username, email, id) {
   try {
-    const token = jwt.sign(
+    const accessToken = jwt.sign(
       { email, username, id },
       process.env.TOKEN_SECRET_KEY,
       {
-        expiresIn: "1h",
+        expiresIn: "5h",
       }
     );
-    return token;
+    const refreshToken = jwt.sign({ id }, process.env.TOKEN_SECRET_KEY, {
+      expiresIn: "1d",
+    });
+
+    const user = await USER.findById(id);
+    if (!user) {
+      throw new Error("user not found ");
+    }
+    await USER.findByIdAndUpdate(user._id, { refreshToken, accessToken });
+    await user.save();
+    return { accessToken, refreshToken };
   } catch (error) {
-    next(error);
+    throw new Error(`error: ${error.stack}`);
   }
 }
 
@@ -25,4 +36,4 @@ function validateToken(token) {
   }
 }
 
-module.exports = { generateToken, validateToken };
+module.exports = { generateAccessTokenAndRefreshToken, validateToken };

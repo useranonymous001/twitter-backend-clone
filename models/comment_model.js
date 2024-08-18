@@ -2,7 +2,7 @@ const { model, Schema } = require("mongoose");
 
 const commentSchema = new Schema(
   {
-    body: {
+    content: {
       type: String,
     },
 
@@ -11,7 +11,7 @@ const commentSchema = new Schema(
       ref: "user",
     },
     tweetId: {
-      type: Schema.Types.ObjectId,                                       
+      type: Schema.Types.ObjectId,
       ref: "tweet",
     },
   },

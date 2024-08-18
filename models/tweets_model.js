@@ -9,7 +9,8 @@ const tweetSchema = new Schema(
 
     likes: [
       {
-        types: Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
+        ref: "user",
       },
     ],
 
