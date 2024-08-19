@@ -60,6 +60,12 @@ const userSchema = new Schema(
         ref: "tweet",
       },
     ],
+    commentedPost: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "comment",
+      },
+    ],
     refreshToken: {
       type: String,
     },

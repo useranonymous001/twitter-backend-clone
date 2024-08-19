@@ -9,6 +9,13 @@ const {
   handleLikes,
 } = require("../controllers/tweet_controller");
 
+const {
+  handleCreateComment,
+  handleUpdateComment,
+  handleDeleteComment,
+  handleGetAllComment,
+} = require("../controllers/comment_controller");
+
 // get the post
 router.get("/home", handleGetHomePage);
 
@@ -26,11 +33,19 @@ router.delete("/home/:tweetId", handleDeleteTweet);
 // router for handling likes
 router.post("/:id/like", handleLikes);
 
-/*
-router for handling comment routes
-*/
+/* ********** ROUTER FOR HANDLING COMMENT ROUTES STARTS HERE ********* */
 
 // create a comment on a post
-router.post("/:tweetId/comment");
+router.post("/:tweetId/comment", handleCreateComment);
+
+// edit the comment on a post
+router.put("/:tweetId/comment", handleUpdateComment);
+
+// delete the comment
+router.delete("/:tweetId/comment", handleDeleteComment);
+
+// get all the comments on the particular post
+router.get("/:tweetId/comment", handleGetAllComment);
+
 
 module.exports = router;

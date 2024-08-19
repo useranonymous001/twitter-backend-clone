@@ -136,10 +136,6 @@ async function handleLikes(req, res, next) {
   }
 }
 
-
-
-
-
 module.exports = {
   handleGetHomePage,
   handleCreateTweet,

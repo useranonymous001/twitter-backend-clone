@@ -43,6 +43,7 @@ app.disable("x-powered-by");
 // requiring routers
 const tweetRoute = require("./routes/tweet_route");
 const userRoute = require("./routes/user_route");
+const exploreRoute = require("./routes/explore_route");
 
 // requiring middlewares
 const { validationErrorHandler } = require("./controllers/error_handler");
@@ -61,7 +62,7 @@ app.get("/home", (req, res) => {
 
 app.use("/user", userRoute);
 app.use("/tweet", isLoggedIn, tweetRoute);
-
+app.use("/explore", isLoggedIn, exploreRoute);
 // using middlewares
 app.use(validationErrorHandler);
 
