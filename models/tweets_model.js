@@ -29,5 +29,7 @@ const tweetSchema = new Schema(
   { timestamps: true }
 );
 
+tweetSchema.index({ content: "text" });
+
 const Tweet = model("tweet", tweetSchema);
 module.exports = Tweet;
