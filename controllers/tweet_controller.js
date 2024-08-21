@@ -136,10 +136,38 @@ async function handleLikes(req, res, next) {
   }
 }
 
+// function for handling bookmarks in an tweet
+async function handleBookmarks(req, res) {
+  const tweetID = req.params.tweetId;
+  if (!tweetID) {
+    return res.json({ message: "parameters cannnot be empy" });
+  }
+
+  try {
+    const user = await USER.findById(req.user.id);
+    const tweet = await TWEET.findById(tweetID);
+    await USER.findByIdAndUpdate(
+      { _id: user._id },
+      {
+        $addToSet: {
+          bookmarks: tweet._id,
+        },
+      }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "bookmarked a tweet", bookmarks: tweet });
+  } catch (error) {
+    res.json({ error: `error occured, ${error.message}` });
+  }
+}
+
 module.exports = {
   handleGetHomePage,
   handleCreateTweet,
   handleUpdateTweet,
   handleDeleteTweet,
   handleLikes,
+  handleBookmarks,
 };

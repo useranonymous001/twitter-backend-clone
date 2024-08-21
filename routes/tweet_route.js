@@ -7,6 +7,7 @@ const {
   handleUpdateTweet,
   handleDeleteTweet,
   handleLikes,
+  handleBookmarks,
 } = require("../controllers/tweet_controller");
 
 const {
@@ -47,5 +48,7 @@ router.delete("/:tweetId/comment", handleDeleteComment);
 // get all the comments on the particular post
 router.get("/:tweetId/comment", handleGetAllComment);
 
+// router for handling bookmarks in an tweet
+router.post("/bookmark/:tweetId", handleBookmarks);
 
 module.exports = router;

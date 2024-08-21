@@ -69,6 +69,7 @@ async function handleUserLogout(req, res) {
   return res.redirect("/home");
 }
 
+// function handle refresh Token regeneration
 async function handleRefreshToken(req, res) {
   const incomingRefreshToken =
     req.cookies.refreshToken || req.body.refreshToken;
@@ -87,11 +88,9 @@ async function handleRefreshToken(req, res) {
       throw new Error("user not found");
     }
     if (incomingRefreshToken !== user?.refreshToken) {
-      return res
-        .status(400)
-        .json({
-          message: "refreshToken is expired, you need to logged in once again",
-        });
+      return res.status(400).json({
+        message: "refreshToken is expired, you need to logged in once again",
+      });
     }
 
     const options = {
@@ -116,9 +115,101 @@ async function handleRefreshToken(req, res) {
   }
 }
 
+/*
+  function for handling follow and followers of users.
+ */
+async function handleFollowUser(req, res) {
+  const followedUser = req.params.userId;
+  const requester = req.user.id;
+
+  if (requester == followedUser) {
+    return res.json({ message: "cannot folow more than once" });
+  }
+  try {
+    const UserFollowed = await USER.findById(followedUser); // user that is being followed
+    const follower = await USER.findById(requester); // user that is following the user
+
+    if (!UserFollowed || !requester) {
+      return res.status(404).json({ message: `user not found` });
+    }
+
+    // can use if...else directly to unfollow the use if tried to follow twice..
+    await USER.findByIdAndUpdate(
+      { _id: UserFollowed._id },
+      {
+        $addToSet: {
+          followers: follower._id,
+        },
+      }
+    );
+    await USER.findByIdAndUpdate(
+      { _id: follower._id },
+      {
+        $addToSet: {
+          following: UserFollowed._id,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "successfully followed...",
+      UserFollowed,
+      follower,
+    });
+  } catch (error) {
+    res.json({ message: `Some error occured, ${error.message}` });
+  }
+}
+
+async function handleUnfollowUser(req, res) {
+  const followedUser = req.params.userId;
+  console.log(followedUser);
+  const requester = req.user.id;
+  console.log(requester);
+
+  if (requester == followedUser) {
+    return res.json({ message: "cannot folow more than once" });
+  }
+
+  try {
+    const UserFollowed = await USER.findById(followedUser); // user that is being followed
+    const follower = await USER.findById(requester); // user that is following the user
+
+    if (!UserFollowed || !requester) {
+      return res.status(404).json({ message: `user not found` });
+    }
+
+    // can use if...else directly to unfollow the use if tried to follow twice..
+    await USER.findByIdAndUpdate(
+      { _id: UserFollowed._id },
+      {
+        $pull: {
+          followers: follower._id,
+        },
+      }
+    );
+    await USER.findByIdAndUpdate(
+      { _id: follower._id },
+      {
+        $pull: {
+          following: UserFollowed._id,
+        },
+      }
+    );
+    return res.status(200).json({
+      message: "successfully unfollowed...",
+      UserFollowed,
+      follower,
+    });
+  } catch (error) {
+    res.json({ message: `Some error occured, ${error.message}` });
+  }
+}
+
 module.exports = {
   handleUserSignUp,
   handleUserLogin,
   handleUserLogout,
   handleRefreshToken,
+  handleFollowUser,
+  handleUnfollowUser,
 };

@@ -17,3 +17,4 @@ router.get("/sort/trending", sortByTrending);
 router.get("/search/", handleSearchQuery);
 
 module.exports = router;
+
