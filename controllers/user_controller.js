@@ -1,7 +1,10 @@
 const USER = require("../models/user_model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { sendErrorResponse } = require("../controllers/error_handler");
+const {
+  sendErrorResponse,
+  tryCatchErrorHandler,
+} = require("../controllers/error_handler");
 const {
   generateAccessTokenAndRefreshToken,
 } = require("../utils/token_generator");
@@ -32,40 +35,42 @@ async function handleUserLogin(req, res) {
       return sendErrorResponse(res, "invalid user credentials");
     }
 
-    const match = bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      return sendErrorResponse(res, "invalid user credentials");
+      sendErrorResponse(res, "invalid user credentials");
+      return;
+    } else {
+      const { accessToken, refreshToken } =
+        await generateAccessTokenAndRefreshToken(
+          user.username,
+          user.email,
+          user._id
+        );
+
+      const options = {
+        httpOnly: true,
+        secure: true,
+      };
+      return res
+        .status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json({
+          message: "successfully logged in",
+          accessToken,
+          refreshToken,
+        });
     }
     // need changes later on
     // req.session.userId = user._id;
-
-    const { accessToken, refreshToken } =
-      await generateAccessTokenAndRefreshToken(
-        user.username,
-        user.email,
-        user._id
-      );
-
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-    res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        message: "successfully logged in",
-        accessToken,
-        refreshToken,
-      });
   } catch (error) {
     res.status(500).json({ message: `Internal server erorr ${error.stack}` });
   }
 }
 
 async function handleUserLogout(req, res) {
-  res.clearCookie("accessToken", "refreshToken");
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
   return res.redirect("/home");
 }
 
@@ -111,7 +116,7 @@ async function handleRefreshToken(req, res) {
       .cookie("accessToken", refreshToken, options)
       .json({ message: "token refreshed", accessToken, refreshToken });
   } catch (error) {
-    throw new Error(error.message);
+    return tryCatchErrorHandler(error);
   }
 }
 
@@ -156,7 +161,7 @@ async function handleFollowUser(req, res) {
       follower,
     });
   } catch (error) {
-    res.json({ message: `Some error occured, ${error.message}` });
+    return tryCatchErrorHandler(error);
   }
 }
 
@@ -201,7 +206,7 @@ async function handleUnfollowUser(req, res) {
       follower,
     });
   } catch (error) {
-    res.json({ message: `Some error occured, ${error.message}` });
+    return tryCatchErrorHandler(error);
   }
 }
 
@@ -234,7 +239,45 @@ async function handleGetUserBio(req, res) {
       user,
     });
   } catch (error) {
-    return res.json({ error: `error occured: ${error.message}` });
+    return tryCatchErrorHandler(error);
+  }
+}
+
+async function handleChangePassword(req, res) {
+  if (!req.body) {
+    return res.json({ message: "some fields are empty" });
+  }
+  const { currentPassword, newPassword, confirmPassword } = req.body;
+
+  try {
+    if (newPassword !== confirmPassword) {
+      return res.json({ message: " password not matched" });
+    }
+    const user = await USER.findById(req.user.id).select("+password");
+    const match = bcrypt.compare(currentPassword, user.password);
+
+    if (!match) {
+      return sendErrorResponse(res, "invalid user credentials");
+    }
+
+    bcrypt.hash(newPassword, 12, async (err, hash) => {
+      await USER.findByIdAndUpdate(
+        { _id: req.user.id },
+        {
+          password: hash,
+        }
+      );
+    });
+    return res
+      .clearCookie("accessToken")
+      .clearCookie("refreshToken")
+      .status(200)
+      .json({
+        success: "successfully changed the password",
+        message: "you need to logged in with a new password",
+      });
+  } catch (error) {
+    return tryCatchErrorHandler(error);
   }
 }
 
@@ -270,4 +313,5 @@ module.exports = {
   handleUnfollowUser,
   handleUserProfile,
   handleGetUserBio,
+  handleChangePassword,
 };

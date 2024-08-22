@@ -10,6 +10,7 @@ const {
   handleUnfollowUser,
   handleUserProfile,
   handleGetUserBio,
+  handleChangePassword,
 } = require("../controllers/user_controller");
 const { isLoggedIn } = require("../controllers/auth_controller");
 
@@ -29,6 +30,7 @@ router.post("/unfollow/:userId", isLoggedIn, handleUnfollowUser);
 
 // routes for handling user profile
 router.post("/bio", isLoggedIn, handleGetUserBio);
+router.put("/changePassword", isLoggedIn, handleChangePassword);
 router.get("/profile/:userId", isLoggedIn, handleUserProfile);
 
 module.exports = router;

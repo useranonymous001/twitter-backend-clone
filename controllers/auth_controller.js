@@ -12,7 +12,7 @@ function isLoggedIn(req, res, next) {
   const token = req.cookies.accessToken;
   if (!token) {
     return res.status(401).json({ message: " you need to logged in first " });
-  }
+  } 
   try {
     const valid = validateToken(token);
     if (valid) {
