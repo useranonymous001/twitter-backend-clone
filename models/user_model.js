@@ -21,6 +21,7 @@ const userSchema = new Schema(
 
     bio: {
       type: String,
+      default: "create your bio..",
     },
 
     tweets: [
@@ -70,6 +71,7 @@ const userSchema = new Schema(
     ],
     refreshToken: {
       type: String,
+      select: false,
     },
   },
   { timestamps: true }

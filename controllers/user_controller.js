@@ -205,6 +205,62 @@ async function handleUnfollowUser(req, res) {
   }
 }
 
+/*
+  Functions for hanlding user profile section
+*/
+
+async function handleGetUserBio(req, res) {
+  const { bio } = req.body;
+  if (!bio) {
+    res.json({ message: "bio cannot be empty" });
+  }
+
+  try {
+    const user = await USER.findById(req.user.id);
+    if (!user) {
+      res.status(400).json({ status: "user not found" });
+    }
+
+    await USER.findByIdAndUpdate(
+      { _id: user._id },
+      {
+        $set: {
+          bio,
+        },
+      }
+    );
+    return res.status(200).json({
+      status: "success",
+      user,
+    });
+  } catch (error) {
+    return res.json({ error: `error occured: ${error.message}` });
+  }
+}
+
+async function handleUserProfile(req, res) {
+  const userID = req.params.userId;
+  if (!userID) {
+    return res.json({ error: "user id must be provided" });
+  }
+
+  try {
+    const user = await USER.findById(userID).select("-password -refreshToken");
+    if (!user) {
+      return res.json({ error: "user not found" });
+    }
+
+    return res.status(200).json({
+      message: "got the user thanks",
+      userDetails: user,
+    });
+  } catch (error) {
+    return res.json({
+      error: `some error occured, ${error.message}`,
+    });
+  }
+}
+
 module.exports = {
   handleUserSignUp,
   handleUserLogin,
@@ -212,4 +268,6 @@ module.exports = {
   handleRefreshToken,
   handleFollowUser,
   handleUnfollowUser,
+  handleUserProfile,
+  handleGetUserBio,
 };
