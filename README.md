@@ -30,29 +30,35 @@ Ensure you have the following installed on your computer:
 
 ### Steps to Install and Run the Project
 
-1. **Clone the Repository**
+1.  **Clone the Repository**
 
-   Open your terminal and run the following command to clone the repository:
+    Open your terminal and run the following command to clone the repository:
 
-   ```bash
-   git clone https://github.com/useranonymous001/twitter-backend-clone.git
-   ```
+    ```bash
+    git clone https://github.com/useranonymous001/twitter-backend-clone.git
+    ```
 
-2. **Navigate to the Project Diretory**
-   cd <directory-name>
-3. **Install Dependencies**
-   npm install <dependencies-1> <dependencies-1> ..
-   '''
-   express mongoose jsonwebtoken dotenv bcrypt path helmet cookie-parser dbgr multer fs
-   '''
-4. **Configure Environment Variables**
-   '''
-   Create a .env file in the root directory and add the following environment variables:
-   '''
-   MONGO_URI=your_mongodb_connection_string
-   PORT=your_preferred_port
-   '''
-   Replace your_mongodb_connection_string with your actual MongoDB connection string and your_preferred_port with the port you want the server to run on (e.g., 3000).
-   '''
-5. **Start the Server**
-   npm start
+2.  **Navigate to the Project Diretory**
+
+    cd dir_name
+
+3.  **Install Dependencies**
+
+    '''bash
+    npm install express mongoose jsonwebtoken dotenv bcrypt path helmet cookie-parser dbgr multer fs
+    '''
+
+4.  **Configure Environment Variables**
+
+    Create a .env file in the root directory and add the following environment variables:
+
+    '''bash
+    MONGO_URI=your_mongodb_connection_string
+    PORT=your_preferred_port
+    '''
+
+    Replace your_mongodb_connection_string with your actual MongoDB connection string and your_preferred_port with the port you want the server to run on (e.g., 3000).
+
+5.  **Start the Server**
+
+    npm start
