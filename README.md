@@ -44,18 +44,18 @@ Ensure you have the following installed on your computer:
 
 3.  **Install Dependencies**
 
-    '''bash
+    ```bash
     npm install express mongoose jsonwebtoken dotenv bcrypt path helmet cookie-parser dbgr multer fs
-    '''
+    ```
 
 4.  **Configure Environment Variables**
 
     Create a .env file in the root directory and add the following environment variables:
 
-    '''bash
+    ```bash
     MONGO_URI=your_mongodb_connection_string
     PORT=your_preferred_port
-    '''
+    ```
 
     Replace your_mongodb_connection_string with your actual MongoDB connection string and your_preferred_port with the port you want the server to run on (e.g., 3000).
 
