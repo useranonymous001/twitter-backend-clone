@@ -12,19 +12,22 @@ async function handleGetHomePage(req, res) {
 
 async function handleCreateTweet(req, res) {
   const { content } = req.body;
+
   if (content == null) return res.json({ message: "tweet cannot be emppty" });
   try {
     const userTweet = await TWEET.create({
       content,
+      tweetCoverImage: req.file.path,
       author: req.user.id,
     });
     const user = await USER.findByIdAndUpdate(
-      { _id: req.user.id },
+      req.user.id,
       {
         $push: {
           tweets: userTweet._id,
         },
-      }
+      },
+      { new: true }
     );
     await user.save();
     return res.json({

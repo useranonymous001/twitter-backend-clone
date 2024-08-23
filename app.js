@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const PORT = process.env.PORT;
-
+const path = require("path");
 const db = require("./config/db_connection");
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
@@ -18,6 +18,7 @@ app.use(cookieParser());
 // middleware for adding extra security
 app.use(helmet()); // adds secruity headers against XSS ans CSP
 app.disable("x-powered-by");
+app.use(express.static(path.resolve("./public")));
 
 // const store = new MongoDBStore({
 //   uri: process.env.MONGODB_URL,

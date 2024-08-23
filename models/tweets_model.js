@@ -25,6 +25,12 @@ const tweetSchema = new Schema(
         ref: "comment",
       },
     ],
+    tweetCoverImage: [
+      {
+        type: String,
+        default: "/uploads/tweetCoverImages",
+      },
+    ],
   },
   { timestamps: true }
 );

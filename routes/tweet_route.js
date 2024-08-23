@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const upload = require("../utils/multer_handler");
 const {
   handleGetHomePage,
   handleCreateTweet,
@@ -22,7 +22,7 @@ router.get("/home", handleGetHomePage);
 
 // posting, updating and deleting the tweet
 // create a post
-router.post("/home", handleCreateTweet);
+router.post("/home", upload.single("filename"), handleCreateTweet);
 
 // note: make the form method=PUT in frontend
 // update the post

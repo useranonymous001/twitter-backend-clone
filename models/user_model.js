@@ -73,6 +73,13 @@ const userSchema = new Schema(
       type: String,
       select: false,
     },
+
+    userProfileImages: [
+      {
+        type: String,
+        default: "/uploads/userProfileImages",
+      },
+    ],
   },
   { timestamps: true }
 );
